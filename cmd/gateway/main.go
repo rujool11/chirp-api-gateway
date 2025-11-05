@@ -3,7 +3,9 @@ package main
 import (
 	"log"
 	"os"
+	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"github.com/rujool11/chirp-api-gateway/internal/utils"
@@ -28,6 +30,14 @@ func main() {
 
 	r := gin.Default()
 
+	r.Use(cors.New(cors.Config{
+		AllowAllOrigins:  true,
+		AllowMethods:     []string{"*"},
+		AllowHeaders:     []string{"*"},
+		ExposeHeaders:    []string{"*"},
+		AllowCredentials: false, // must be false when AllowAllOrigins is true
+		MaxAge:           12 * time.Hour,
+	}))
 	// redirect /auth to auth service
 	r.Any("/auth/*path", utils.ReverseProxy(AUTH_URL, "/auth"))
 
